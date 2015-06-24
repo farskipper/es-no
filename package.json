@@ -1,0 +1,37 @@
+{
+  "name": "es-no",
+  "version": "0.0.0",
+  "description": "A compile to JS language with only Essential Syntax and NO standard library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests.js | tap-min"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smallhelm/es-no.git"
+  },
+  "keywords": [
+    "language",
+    "lisp",
+    "scheme",
+    "compiler"
+  ],
+  "files": [
+    "index.js",
+    "src-to-tokens.js"
+  ],
+  "author": "smallhelm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smallhelm/es-no/issues"
+  },
+  "homepage": "https://github.com/smallhelm/es-no#readme",
+  "devDependencies": {
+    "tape": "4.0.0",
+    "tap-min": "1.0.0"
+  },
+  "dependencies": {
+    "escape-regexp": "0.0.1",
+    "tokenizer2": "1.0.1"
+  }
+}
