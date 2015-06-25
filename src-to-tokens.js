@@ -20,9 +20,9 @@ module.exports = function(){
   var t = tokenizer2();
 
   t.addRule(/^[\s,]+$/, 'whitespace');
+  t.addRule(/^;[^\n]*$/, 'comment');
   t.addRule(/(^""$)|(^"([^"]|\\")*[^\\]"$)/, 'string');
   t.addRule(number_regex, 'number');
-  t.addRule(/^;[^\n]*$/, 'comment');
 
   grouping_chars.forEach(function(c, i){
     t.addRule(new RegExp('^' + escapeRegExp(c) + '$'), i < grouping_chars.length / 2 ? 'open' : 'close');
