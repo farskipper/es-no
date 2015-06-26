@@ -92,3 +92,18 @@ test('on individual chars', function(t){
     t.end(err);
   });
 });
+
+test('dispatch', function(t){
+  setup([
+    '#one#two(#3',
+  ], function(err, tokens){
+    t.deepEquals(tokens, [
+      ['dispatch', '#', 1, 1],
+      ['symbol', 'one#two', 1, 2],
+      ['open', '(', 1, 9],
+      ['dispatch', '#', 1, 10],
+      ['number', '3', 1, 11]
+    ]);
+    t.end(err);
+  });
+});

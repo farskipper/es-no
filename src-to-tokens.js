@@ -28,7 +28,9 @@ module.exports = function(){
     t.addRule(new RegExp('^' + escapeRegExp(c) + '$'), i < grouping_chars.length / 2 ? 'open' : 'close');
   });
 
-  t.addRule(new RegExp('^[^0-9' + separators + '][^' + separators + ']*$'), 'symbol');
+  t.addRule(/^#$/, 'dispatch');
+
+  t.addRule(new RegExp('^[^0-9#' + separators + '][^' + separators + ']*$'), 'symbol');
 
   return t;
 };
