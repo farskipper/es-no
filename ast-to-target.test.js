@@ -21,6 +21,14 @@ var setup = function(src, callback){
   defTargetMacro('$$es-no$$top-level-expression', function(ast, astToTarget){
     return astToTarget(ast);
   });
+  defTargetMacro('$$es-no$$fn-call', function(ast, astToTarget){
+    var args = [];
+    var i;
+    for(i=2; i<ast.value.length; i++){
+      args.push(astToTarget(ast.value[i]));
+    }
+    return {fn_name: ast.value[1].value, args: args};
+  });
   defTargetMacro('$$es-no$$make-type-string', function(ast, astToTarget){
     return {string: ast.value};
   });
@@ -130,6 +138,21 @@ test('double expand a macro', function(t){
           {number: 3}
         ]}
       ]}
+    ]);
+    t.end(err);
+  });
+});
+
+test('function call', function(t){
+  setup('(+ 1 2)', function(err, parts){
+    t.deepEquals(parts, [
+      {
+        fn_name: '+',
+        args: [
+          {number: 1},
+          {number: 2}
+        ]
+      }
     ]);
     t.end(err);
   });
