@@ -10,62 +10,65 @@ var setup = function(src, callback){
 
   var s = srcToTokens();
   var a = tokensToAST();
-  var e = astToTarget({
-    macros: {
-      surround: function(ast){
-        return xtend({}, ast, {
-          type: 'list',
-          value: [
-            xtend({}, ast, {type: 'symbol', value: 'list'}),
-            xtend({}, ast, {type: 'number', value: '1'}),
-            ast.value[1],
-            xtend({}, ast, {type: 'number', value: '3'})
-          ]
-        });
-      },
-      'surround-these': function(ast){
-        return xtend({}, ast, {
-          type: 'list',
-          value: [
-            xtend({}, ast, {type: 'symbol', value: 'list'}),
-            xtend({}, ast, {
-              type: 'list',
-              value: [
-                xtend({}, ast, {type: 'symbol', value: 'surround'}),
-                ast.value[1]
-              ]
-            }),
-            xtend({}, ast, {
-              type: 'list',
-              value: [
-                xtend({}, ast, {type: 'symbol', value: 'surround'}),
-                ast.value[2]
-              ]
-            })
-          ]
-        });
-      }
-    },
-    target_macros: {
-      '$$es-no$$top-level-expression': function(ast, astToTarget){
-        return astToTarget(ast);
-      },
-      '$$es-no$$make-type-string': function(ast, astToTarget){
-        return {string: ast.value};
-      },
-      '$$es-no$$make-type-number': function(ast, astToTarget){
-        return {number: parseFloat(ast.value)};
-      },
-      'list': function(ast, astToTarget){
-        var vals = [];
-        var i;
-        for(i=1; i<ast.value.length; i++){
-          vals.push(astToTarget(ast.value[i]));
-        }
-        return {list: vals};
-      }
-    }
+  var e = astToTarget();
+  var defMacro = function(name, fn){
+    e.macros[name] = {type: 'ast-macro', fn: fn};
+  };
+  var defTargetMacro = function(name, fn){
+    e.macros[name] = {type: 'target-macro', fn: fn};
+  };
+
+  defTargetMacro('$$es-no$$top-level-expression', function(ast, astToTarget){
+    return astToTarget(ast);
   });
+  defTargetMacro('$$es-no$$make-type-string', function(ast, astToTarget){
+    return {string: ast.value};
+  });
+  defTargetMacro('$$es-no$$make-type-number', function(ast, astToTarget){
+    return {number: parseFloat(ast.value)};
+  });
+  defTargetMacro('list', function(ast, astToTarget){
+    var vals = [];
+    var i;
+    for(i=1; i<ast.value.length; i++){
+      vals.push(astToTarget(ast.value[i]));
+    }
+    return {list: vals};
+  });
+  defMacro('surround', function(ast){
+    return xtend({}, ast, {
+      type: 'list',
+      value: [
+        xtend({}, ast, {type: 'symbol', value: 'list'}),
+        xtend({}, ast, {type: 'number', value: '1'}),
+        ast.value[1],
+        xtend({}, ast, {type: 'number', value: '3'})
+      ]
+    });
+  });
+  defMacro('surround-these', function(ast){
+    return xtend({}, ast, {
+      type: 'list',
+      value: [
+        xtend({}, ast, {type: 'symbol', value: 'list'}),
+        xtend({}, ast, {
+          type: 'list',
+          value: [
+            xtend({}, ast, {type: 'symbol', value: 'surround'}),
+            ast.value[1]
+          ]
+        }),
+        xtend({}, ast, {
+          type: 'list',
+          value: [
+            xtend({}, ast, {type: 'symbol', value: 'surround'}),
+            ast.value[2]
+          ]
+        })
+      ]
+    });
+  });
+
   s.pipe(a).pipe(e);
 
   e.on('data', function(ast){
