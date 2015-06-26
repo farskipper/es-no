@@ -19,7 +19,8 @@
   "files": [
     "index.js",
     "src-to-tokens.js",
-    "tokens-to-ast.js"
+    "tokens-to-ast.js",
+    "ast-to-target.js"
   ],
   "author": "smallhelm",
   "license": "MIT",
