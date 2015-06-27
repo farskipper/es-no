@@ -3,13 +3,13 @@ var through2 = require('through2');
 
 module.exports = function(){
 
-  var macros = {};
+  var target_macros = {};
 
   var callMacro = function(name, ast){
-    if(!macros[name]){
-      throw new Error('no target macro defined for: ' + name);
+    if(!target_macros[name]){
+      throw new Error('No target macro defined for: ' + name);
     }
-    return macros[name](ast, astToTarget);
+    return target_macros[name](ast, astToTarget);
   };
 
   var astToTarget = function(ast){
@@ -18,9 +18,9 @@ module.exports = function(){
     }
     var list_op = ast.value[0];
     if(!list_op || list_op.type !== 'symbol'){
-      throw new Error('First arg in a AST list should always be a symbol, but was: ' + (list_op && list_op.type));
+      throw new Error('First arg in an AST list should always be a symbol, but was: ' + (list_op && list_op.type));
     }
-    var macro = macros[list_op.value];
+    var macro = target_macros[list_op.value];
     if(!macro){
       list_op = xtend({}, ast, {
         type: 'symbol',
@@ -39,6 +39,6 @@ module.exports = function(){
       done(e);
     }
   });
-  s.macros = macros;
+  s.target_macros = target_macros;
   return s;
 };
