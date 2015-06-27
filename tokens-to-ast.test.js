@@ -153,44 +153,36 @@ test('array', function(t){
   });
 });
 
+var rmLoc = function(ast){
+  delete ast.loc;
+  if(ast.type === 'list'){
+    ast.value = ast.value.map(rmLoc);
+  }
+  return ast;
+};
+
 test('map', function(t){
   setup('{"one" 1}', function(err, parts){
-    t.deepEquals(parts, [{
+    t.deepEquals(parts.map(rmLoc), [{
       "type": "list",
       "src": "{",
       "value": [
         {
           "type": "symbol",
           "src": "{",
-          "value": "$$es-no$$map",
-          "loc": {
-            "start": {"line": 1, "column": 0},
-            "end": {"line": 1, "column": 0}
-          }
+          "value": "$$es-no$$map"
         },
         {
           "type": "string",
           "src": '"one"',
-          "value": "one",
-          "loc": {
-            "start": {"line": 1, "column": 1},
-            "end": {"line": 1, "column": 5}
-          }
+          "value": "one"
         },
         {
           "type": "number",
           "src": "1",
-          "value": "1",
-          "loc": {
-            "start": {"line": 1, "column": 7},
-            "end": {"line": 1, "column": 7}
-          }
+          "value": "1"
         }
-      ],
-      "loc": {
-        "start": {"line": 1, "column": 0},
-        "end": {"line": 1, "column": 0}
-      }
+      ]
     }]);
     t.end(err);
   });
