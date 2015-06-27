@@ -24,16 +24,26 @@ module.exports = function(){
       return;
     }else if(token.type === 'comment'){
       return;
-    }else if(token.type === 'string'){
-      token.value = token.src.substring(1, token.src.length - 1).replace(/\\"/g, '"');
-    }else if(token.type === 'number'){
-      //just de-sugar the number. Converting it to a float, or big-num language dialect
-      token.value = token.src.replace(/[+,]/g, '').toLowerCase();
+    }else if(token.type === 'dispatch'){
+      onToken(xtend({}, token, {
+        type: 'open',
+        list_max_size: 2
+      }));
+      onToken(xtend({}, token, {
+        type: 'symbol',
+        value: '$$es-no$$dispatch'
+      }));
+      return;
     }else if(token.type === 'open'){
       return stack.push(xtend({}, token, {
         type: 'list',
         value: []
       }));
+    }else if(token.type === 'string'){
+      token.value = token.src.substring(1, token.src.length - 1).replace(/\\"/g, '"');
+    }else if(token.type === 'number'){
+      //just de-sugar the number. Converting it to a float, or big-num language dialect
+      token.value = token.src.replace(/[+,]/g, '').toLowerCase();
     }else if(token.type === 'close'){
       token = stack.pop();
     }else if(token.type === 'symbol'){
@@ -69,19 +79,6 @@ module.exports = function(){
     delete token.line;
     delete token.col;
 
-    if(token.type === 'dispatch'){
-      onToken(xtend({}, token, {
-        type: 'open',
-        list_max_size: 2
-      }));
-      onToken(xtend({}, token, {
-        type: 'symbol',
-        value: '$$es-no$$dispatch'
-      }));
-      done();
-      return;
-    }
-
     onToken(token);
 
     if(token.src === '{'){
@@ -98,7 +95,7 @@ module.exports = function(){
     done();
   }, function(done){
     if(stack.length > 0){
-      return done(new Error('Looks like you are missing ), ] or }'));
+      return done(new Error('Looks like you are missing a ), ] or }'));
     }
     done();
   });
