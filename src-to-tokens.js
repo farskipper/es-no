@@ -3,7 +3,7 @@ var escapeRegExp = require('escape-regexp');
 
 var grouping_chars = '([{}])'.split('');
 
-var separators = escapeRegExp(grouping_chars.join('')) +'\\s,;"';
+var separators = escapeRegExp(grouping_chars.join('') + ',;"#') +'\\s';
 
 var number_regex = (function(){
   var s = '';
@@ -28,9 +28,9 @@ module.exports = function(){
     t.addRule(new RegExp('^' + escapeRegExp(c) + '$'), i < grouping_chars.length / 2 ? 'open' : 'close');
   });
 
-  t.addRule(/^#$/, 'dispatch');
+  t.addRule(new RegExp('^#$'), 'dispatch');
 
-  t.addRule(new RegExp('^[^0-9#' + separators + '][^' + separators + ']*$'), 'symbol');
+  t.addRule(new RegExp('^[^0-9' + separators + '][^' + separators + ']*$'), 'symbol');
 
   return t;
 };

@@ -99,7 +99,9 @@ test('dispatch', function(t){
   ], function(err, tokens){
     t.deepEquals(tokens, [
       ['dispatch', '#', 1, 1],
-      ['symbol', 'one#two', 1, 2],
+      ['symbol', 'one', 1, 2],
+      ['dispatch', '#', 1, 5],
+      ['symbol', 'two', 1, 6],
       ['open', '(', 1, 9],
       ['dispatch', '#', 1, 10],
       ['number', '3', 1, 11]
