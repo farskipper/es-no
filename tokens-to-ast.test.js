@@ -223,47 +223,33 @@ test('dispatch symbol', function(t){
   });
 });
 
-test('dispatch map', function(t){
-  setup('#{"one" 1} two', function(err, parts){
-    t.deepEquals(parts.map(rmLoc), [
-      {
-        type: "list",
-        src: "#",
-        list_max_size: 2,
-        value: [
-          {
-            type: "symbol",
-            src: "#",
-            value: "$$es-no$$dispatch"
-          },
-          {
-            type: "list",
-            src: "{",
-            value: [
-              {
-                type: "symbol",
-                src: "{",
-                value: "$$es-no$$map"
-              },
-              {
-                type: "string",
-                src: "\"one\"",
-                value: "one"
-              },
-              {
-                type: "number",
-                src: "1",
-                value: "1"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        type: "symbol",
-        src: "two",
-        value: "two"
-      }
+var essenceOfAST = function(ast){
+  if(ast.type === "list"){
+    return ast.value.map(essenceOfAST);
+  }
+  return ast.value.replace('$$es-no$$', '$');
+};
+
+test('dispatch types', function(t){
+  setup([
+    '#one two three four',
+    '# one two three four',
+    '#one #two #three four',
+    '#1',
+    '#{"one" 1} two',
+    '#"one" two',
+    '#(one two three) four',
+    '#(#(one))'
+  ].join("\n"), function(err, parts){
+    t.deepEquals(parts.map(essenceOfAST), [
+      ["$dispatch", "one", "two"], "three", "four",
+      ["$dispatch", "one", "two"], "three", "four",
+      ["$dispatch", "one", ["$dispatch", "two", ["$dispatch", "three", "four"]]],
+      ["$dispatch", "1"],
+      ["$dispatch", ["$map", "one", "1"]], "two",
+      ["$dispatch", "one"], "two",
+      ["$dispatch", ["one", "two", "three"]], "four",
+      ["$dispatch", [["$dispatch", ["one"]]]]
     ]);
     t.end(err);
   });
