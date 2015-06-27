@@ -187,3 +187,84 @@ test('map', function(t){
     t.end(err);
   });
 });
+
+test('dispatch symbol', function(t){
+  setup('#one two three', function(err, parts){
+    t.deepEquals(parts.map(rmLoc), [
+      {
+        type: "list",
+        src: "#",
+        list_max_size: 3,
+        value: [
+          {
+            type: "symbol",
+            src: "#",
+            value: "$$es-no$$dispatch"
+          },
+          {
+            type: "symbol",
+            src: "one",
+            value: "one"
+          },
+          {
+            type: "symbol",
+            src: "two",
+            value: "two"
+          }
+        ]
+      },
+      {
+        type: "symbol",
+        src: "three",
+        value: "three"
+      }
+    ]);
+    t.end(err);
+  });
+});
+
+test('dispatch map', function(t){
+  setup('#{"one" 1} two', function(err, parts){
+    t.deepEquals(parts.map(rmLoc), [
+      {
+        type: "list",
+        src: "#",
+        list_max_size: 2,
+        value: [
+          {
+            type: "symbol",
+            src: "#",
+            value: "$$es-no$$dispatch"
+          },
+          {
+            type: "list",
+            src: "{",
+            value: [
+              {
+                type: "symbol",
+                src: "{",
+                value: "$$es-no$$map"
+              },
+              {
+                type: "string",
+                src: "\"one\"",
+                value: "one"
+              },
+              {
+                type: "number",
+                src: "1",
+                value: "1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        type: "symbol",
+        src: "two",
+        value: "two"
+      }
+    ]);
+    t.end(err);
+  });
+});

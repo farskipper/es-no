@@ -43,8 +43,20 @@ module.exports = function(){
     }else{
       throw new Error('unexpected token type: ' + token.type);
     }
-    if(stack.length > 0){
-      stack[stack.length - 1].value.push(token);
+
+    var curr_list = stack.length > 0 && stack[stack.length - 1] || undefined;
+    if(curr_list){
+      curr_list.value.push(token);
+      if(curr_list.hasOwnProperty('list_max_size')){
+        if(token.type === 'symbol' && curr_list.value.length === 2){
+          curr_list.list_max_size++;
+        }
+        if(curr_list.value.length === curr_list.list_max_size){
+          onToken(xtend({}, token, {
+            type: 'close'
+          }));
+        }
+      }
     }else{
       ast_stream.push(token);
     }
@@ -56,6 +68,19 @@ module.exports = function(){
     token.loc = tokenToLoc(token);
     delete token.line;
     delete token.col;
+
+    if(token.type === 'dispatch'){
+      onToken(xtend({}, token, {
+        type: 'open',
+        list_max_size: 2
+      }));
+      onToken(xtend({}, token, {
+        type: 'symbol',
+        value: '$$es-no$$dispatch'
+      }));
+      done();
+      return;
+    }
 
     onToken(token);
 
