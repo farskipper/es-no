@@ -73,26 +73,30 @@ module.exports = function(){
   };
 
   var ast_stream = through2.obj(function(token_orig, enc, done){
-    var token = xtend({}, token_orig);
+    try{
+      var token = xtend({}, token_orig);
 
-    token.loc = tokenToLoc(token);
-    delete token.line;
-    delete token.col;
+      token.loc = tokenToLoc(token);
+      delete token.line;
+      delete token.col;
 
-    onToken(token);
+      onToken(token);
 
-    if(token.src === '{'){
-      onToken(xtend({}, token, {
-        type: 'symbol',
-        value: '$$es-no$$map'
-      }));
-    }else if(token.src === '['){
-      onToken(xtend({}, token, {
-        type: 'symbol',
-        value: '$$es-no$$array'
-      }));
+      if(token.src === '{'){
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$map'
+        }));
+      }else if(token.src === '['){
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$array'
+        }));
+      }
+      done();
+    }catch(e){
+      done(e);
     }
-    done();
   }, function(done){
     if(stack.length > 0){
       return done(new Error('Looks like you are missing a ), ] or }'));
