@@ -12,10 +12,12 @@ var setup = function(src, callback){
   var a = tokensToAST();
   var e = astToTarget();
   var defMacro = function(name, fn){
-    e.macros[name] = {type: 'ast-macro', fn: fn};
+    e.macros[name] = function(ast, astToTarget){
+      return astToTarget(fn(ast));
+    };
   };
   var defTargetMacro = function(name, fn){
-    e.macros[name] = {type: 'target-macro', fn: fn};
+    e.macros[name] = fn;
   };
 
   defTargetMacro('$$es-no$$top-level-expression', function(ast, astToTarget){

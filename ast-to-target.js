@@ -9,14 +9,7 @@ module.exports = function(){
     if(!macros[name]){
       throw new Error('no target macro defined for: ' + name);
     }
-    var macro = macros[name];
-    if(macro.type === 'ast-macro'){
-      //macro expansion
-      return astToTarget(macro.fn(ast));
-    }else if(macro.type === 'target-macro'){
-      return macro.fn(ast, astToTarget);
-    }
-    throw new Error('invalid macro type: '+name+' '+macro.type);
+    return macros[name](ast, astToTarget);
   };
 
   var astToTarget = function(ast){
