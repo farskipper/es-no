@@ -24,12 +24,7 @@ var setup = function(src, callback){
     return astToTarget(ast);
   });
   defTargetMacro('$$es-no$$fn-call', function(ast, astToTarget){
-    var args = [];
-    var i;
-    for(i=2; i<ast.value.length; i++){
-      args.push(astToTarget(ast.value[i]));
-    }
-    return {fn_name: ast.value[1].value, args: args};
+    return {fn_name: ast.value[1].value, args: ast.value.slice(2).map(astToTarget)};
   });
   defTargetMacro('$$es-no$$make-type-string', function(ast, astToTarget){
     return {string: ast.value};
@@ -38,12 +33,7 @@ var setup = function(src, callback){
     return {number: parseFloat(ast.value)};
   });
   defTargetMacro('list', function(ast, astToTarget){
-    var vals = [];
-    var i;
-    for(i=1; i<ast.value.length; i++){
-      vals.push(astToTarget(ast.value[i]));
-    }
-    return {list: vals};
+    return {list: ast.value.slice(1).map(astToTarget)};
   });
   defMacro('surround', function(ast){
     return xtend({}, ast, {
