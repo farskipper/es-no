@@ -95,7 +95,7 @@ test('on individual chars', function(t){
 
 test('dispatch', function(t){
   setup([
-    '#one#two(#3',
+    '#one#two(#3\'@^',
   ], function(err, tokens){
     t.deepEquals(tokens, [
       ['dispatch', '#', 1, 1],
@@ -104,7 +104,10 @@ test('dispatch', function(t){
       ['symbol', 'two', 1, 6],
       ['open', '(', 1, 9],
       ['dispatch', '#', 1, 10],
-      ['number', '3', 1, 11]
+      ['number', '3', 1, 11],
+      ['dispatch-quote', "'", 1, 12],
+      ['dispatch-deref', '@', 1, 13],
+      ['dispatch-meta', '^', 1, 14]
     ]);
     t.end(err);
   });

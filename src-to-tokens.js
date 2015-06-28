@@ -1,9 +1,26 @@
 var tokenizer2 = require('tokenizer2');
 var escapeRegExp = require('escape-regexp');
 
-var grouping_chars = '([{}])'.split('');
+var special_chars = [
+  ["(", "open"],
+  ["[", "open"],
+  ["{", "open"],
 
-var separators = escapeRegExp(grouping_chars.join('') + ',;"#') +'\\s';
+  [")", "close"],
+  ["]", "close"],
+  ["}", "close"],
+
+  ["#", "dispatch"],
+  ["'", "dispatch-quote"],
+  ["`", "dispatch-super-quote"],
+  ["@", "dispatch-deref"],
+  ["~", "dispatch-unquote"],
+  ["^", "dispatch-meta"]
+];
+
+var separators = '\\s' + escapeRegExp(',;"' + special_chars.map(function(d){
+  return d[0];
+}).join(''));
 
 var number_regex = (function(){
   var s = '';
@@ -24,11 +41,9 @@ module.exports = function(){
   t.addRule(/(^""$)|(^"([^"]|\\")*[^\\]"$)/, 'string');
   t.addRule(number_regex, 'number');
 
-  grouping_chars.forEach(function(c, i){
-    t.addRule(new RegExp('^' + escapeRegExp(c) + '$'), i < grouping_chars.length / 2 ? 'open' : 'close');
+  special_chars.forEach(function(p){
+    t.addRule(new RegExp('^' + escapeRegExp(p[0]) + '$'), p[1]);
   });
-
-  t.addRule(new RegExp('^#$'), 'dispatch');
 
   t.addRule(new RegExp('^[^0-9' + separators + '][^' + separators + ']*$'), 'symbol');
 
