@@ -230,7 +230,7 @@ var essenceOfAST = function(ast){
   return ast.value.replace('$$es-no$$', '$');
 };
 
-test('dispatch types', function(t){
+test('dispatch grouping types', function(t){
   setup([
     '#one two three four',
     '# one two three four',
@@ -250,6 +250,24 @@ test('dispatch types', function(t){
       ["$dispatch", "one"], "two",
       ["$dispatch", ["one", "two", "three"]], "four",
       ["$dispatch", [["$dispatch", ["one"]]]]
+    ]);
+    t.end(err);
+  });
+});
+
+test('other dispatch types', function(t){
+  setup([
+    "`(^{} 'one ~two @three)"
+  ].join("\n"), function(err, parts){
+    t.deepEquals(parts.map(essenceOfAST), [
+      ["$dispatch-super-quote",
+        [
+          ["$dispatch-meta", ["$map"]],
+          ["$dispatch-quote", "one"],
+          ["$dispatch-unquote", "two"],
+          ["$dispatch-deref", "three"]
+        ]
+      ]
     ]);
     t.end(err);
   });
