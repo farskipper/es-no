@@ -29,7 +29,7 @@ var number_regex = (function(){
     '([0-9][0-9,]*\\.?[0-9]*)',//starting with a number
     '(\\.[0-9]+)'//starting with a period
   ].join('|') + ')';
-  s += '([eE][-+]?[0-9,]*)?';//optional exponent
+  s += '([eE][-+]?[0-9]*)?';//optional exponent (using * b/c the tokenizer needs to match as it goes along)
   return new RegExp('^' + s + '$');
 }());
 
