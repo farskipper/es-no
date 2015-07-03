@@ -18,8 +18,8 @@ var special_chars = [
   ["^", "dispatch-meta"]
 ];
 
-var separators = '\\s' + escapeRegExp(',;"' + special_chars.map(function(d){
-  return d[0];
+var separators = '\\s\\b' + escapeRegExp(',;"' + special_chars.map(function(p){
+  return p[0];
 }).join(''));
 
 var number_regex = (function(){
@@ -36,7 +36,7 @@ var number_regex = (function(){
 module.exports = function(){
   var t = tokenizer2();
 
-  t.addRule(/^[\s,]+$/, 'whitespace');
+  t.addRule(/^[\n ,]+$/, 'whitespace');//only new-line space and comma are valid whitespace
   t.addRule(/^;[^\n]*$/, 'comment');
   t.addRule(/(^""$)|(^"([^"]|\\")*[^\\]"$)/, 'string');
   t.addRule(number_regex, 'number');

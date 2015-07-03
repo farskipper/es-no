@@ -9,6 +9,9 @@ var setup = function(writes, callback){
   s.on('data', function(token){
     tokens.push([token.type, token.src, token.line, token.col]);
   });
+  s.on('error', function(err){
+    callback(err);
+  });
   s.on('end', function(){
     callback(undefined, tokens);
   });
@@ -127,5 +130,41 @@ test('keyword', function(t){
       ['keyword', ':', 1, 26]
     ]);
     t.end(err);
+  });
+});
+
+test('prevent harmful whitespace', function(t){ var assertWhitespace = function(c){
+    setup([c], function(err, tokens){
+      if(err){
+        t.fail();
+        return;
+      }
+      t.deepEquals(tokens, [['whitespace', c, 1, 1]]);
+    });
+  };
+  var assertNotWhitespace = function(c){
+    setup([c], function(err, tokens){
+      t.ok(err);//should fail
+    });
+  };
+
+  t.plan(13);
+  assertWhitespace("\n");
+  assertWhitespace(" ");
+  assertWhitespace(",");
+
+  assertNotWhitespace("\t");//yes tabs are harmful, especially when formatting lisp code
+  assertNotWhitespace("\r");//yep you need to fix your text editor
+  assertNotWhitespace("\v");
+  assertNotWhitespace("\f");
+  assertNotWhitespace("\b");
+  assertNotWhitespace("\u00A0");
+  assertNotWhitespace("\u2028");
+  assertNotWhitespace("\u2029");
+  assertNotWhitespace("\uFEFF");
+
+  setup(["\"a string with a \t tab\""], function(err, tokens){
+    //any whitespace char should be allowed inside of a string
+    t.deepEquals(tokens, [['string', "\"a string with a \t tab\"", 1, 1]]);
   });
 });
