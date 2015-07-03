@@ -112,3 +112,20 @@ test('dispatch', function(t){
     t.end(err);
   });
 });
+
+test('keyword', function(t){
+  setup([
+    ':hello ::hello2,:hello3: :',
+  ], function(err, tokens){
+    t.deepEquals(tokens, [
+      ['keyword', ':hello', 1, 1],
+      ['whitespace', ' ', 1, 7],
+      ['keyword', '::hello2', 1, 8],
+      ['whitespace', ',', 1, 16],
+      ['keyword', ':hello3:', 1, 17],
+      ['whitespace', ' ', 1, 25],
+      ['keyword', ':', 1, 26]
+    ]);
+    t.end(err);
+  });
+});

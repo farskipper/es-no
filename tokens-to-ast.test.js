@@ -272,3 +272,14 @@ test('other dispatch types', function(t){
     t.end(err);
   });
 });
+
+test('keyword ast node value', function(t){
+  setup(':one ::two :three:', function(err, parts){
+    t.deepEquals(parts.map(rmLoc), [
+      {type: "keyword", src: ":one", value: "one"},
+      {type: "keyword", src: "::two", value: ":two"},
+      {type: "keyword", src: ":three:", value: "three:"}
+    ]);
+    t.end(err);
+  });
+});

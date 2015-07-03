@@ -46,6 +46,8 @@ module.exports = function(){
       token.value = token.src.replace(/[+,]/g, '').toLowerCase();
     }else if(token.type === 'close'){
       token = stack.pop();
+    }else if(token.type === 'keyword'){
+      token.value = token.src.substring(1);
     }else if(token.type === 'symbol'){
       if(!token.hasOwnProperty('value')){
         token.value = token.src;

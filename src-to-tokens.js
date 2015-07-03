@@ -45,6 +45,7 @@ module.exports = function(){
     t.addRule(new RegExp('^' + escapeRegExp(p[0]) + '$'), p[1]);
   });
 
+  t.addRule(new RegExp('^\\:[^' + separators + ']*$'), 'keyword');
   t.addRule(new RegExp('^[^0-9' + separators + '][^' + separators + ']*$'), 'symbol');
 
   return t;
