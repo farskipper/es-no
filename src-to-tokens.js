@@ -36,7 +36,7 @@ var number_regex = (function(){
 module.exports = function(){
   var t = tokenizer2();
 
-  t.addRule(/^[\n ,]+$/, 'whitespace');//only new-line, space and comma are valid whitespace
+  t.addRule(/^[\n ]+$/, 'whitespace');//only new-line and space are valid whitespace
   t.addRule(/^;[^\n]*$/, 'comment');
   t.addRule(/(^""$)|(^"([^"]|\\")*[^\\]"$)/, 'string');
   t.addRule(number_regex, 'number');

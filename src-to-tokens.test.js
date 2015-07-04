@@ -21,8 +21,8 @@ var setup = function(writes, callback){
 
 var demo_src = '';
 demo_src += 'hello world;a comment\n';
-demo_src += '(map {"a" 1,\n';
-demo_src += '      "b" 2}(fn[[k,v]] (+ 1 v)))\n';
+demo_src += '(map {"a" 1\n';
+demo_src += '      "b" 2}(fn[[k v]] (+ 1 v)))\n';
 demo_src += '-1,000.25e-10\n';
 demo_src += '+1,000.25e+10';
 
@@ -38,8 +38,8 @@ var expected_tokens = [
   ['open', '{', 2, 6],
   ['string', '"a"', 2, 7],
   ['whitespace', ' ', 2, 10],
-  ['number', '1,', 2, 11],
-  ['whitespace', '\n      ', 2, 13],
+  ['number', '1', 2, 11],
+  ['whitespace', '\n      ', 2, 12],
   ['string', '"b"', 3, 7],
   ['whitespace', ' ', 3, 10],
   ['number', '2', 3, 11],
@@ -49,7 +49,7 @@ var expected_tokens = [
   ['open', '[', 3, 16],
   ['open', '[', 3, 17],
   ['symbol', 'k', 3, 18],
-  ['whitespace', ',', 3, 19],
+  ['whitespace', ' ', 3, 19],
   ['symbol', 'v', 3, 20],
   ['close', ']', 3, 21],
   ['close', ']', 3, 22],
@@ -118,13 +118,13 @@ test('dispatch', function(t){
 
 test('keyword', function(t){
   setup([
-    ':hello ::hello2,:hello3: :',
+    ':hello ::hello2 :hello3: :',
   ], function(err, tokens){
     t.deepEquals(tokens, [
       ['keyword', ':hello', 1, 1],
       ['whitespace', ' ', 1, 7],
       ['keyword', '::hello2', 1, 8],
-      ['whitespace', ',', 1, 16],
+      ['whitespace', ' ', 1, 16],
       ['keyword', ':hello3:', 1, 17],
       ['whitespace', ' ', 1, 25],
       ['keyword', ':', 1, 26]
@@ -151,8 +151,8 @@ test('prevent harmful whitespace', function(t){ var assertWhitespace = function(
   t.plan(13);
   assertWhitespace("\n");
   assertWhitespace(" ");
-  assertWhitespace(",");
 
+  assertNotWhitespace(",");
   assertNotWhitespace("\t");//yes tabs are harmful, especially when formatting lisp code
   assertNotWhitespace("\r");//yep you need to fix your text editor
   assertNotWhitespace("\v");
@@ -163,8 +163,8 @@ test('prevent harmful whitespace', function(t){ var assertWhitespace = function(
   assertNotWhitespace("\u2029");
   assertNotWhitespace("\uFEFF");
 
-  setup(["\"a string with a \t tab\""], function(err, tokens){
+  setup(["\"a string, with a \t tab\""], function(err, tokens){
     //any whitespace char should be allowed inside of a string
-    t.deepEquals(tokens, [['string', "\"a string with a \t tab\"", 1, 1]]);
+    t.deepEquals(tokens, [['string', "\"a string, with a \t tab\"", 1, 1]]);
   });
 });
