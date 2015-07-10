@@ -27,12 +27,23 @@ module.exports = function(){
     }else if(/^dispatch/.test(token.type)){
       onToken(xtend({}, token, {
         type: 'open',
-        list_max_size: 2
+        list_max_size: token.type === 'dispatch-symbol' ? 3 : 2
       }));
-      onToken(xtend({}, token, {
-        type: 'symbol',
-        value: '$$es-no$$' + token.type
-      }));
+      if(token.type === 'dispatch-symbol'){
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$dispatch'
+        }));
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: token.src.substring(1)
+        }));
+      }else{
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$' + token.type
+        }));
+      }
       return;
     }else if(token.type === 'open'){
       return stack.push(xtend({}, token, {
@@ -60,9 +71,6 @@ module.exports = function(){
     if(curr_list){
       curr_list.value.push(token);
       if(curr_list.hasOwnProperty('list_max_size')){
-        if(token.type === 'symbol' && curr_list.src === '#' && curr_list.value.length === 2){
-          curr_list.list_max_size++;
-        }
         if(curr_list.value.length === curr_list.list_max_size){
           onToken(xtend({}, token, {
             type: 'close'

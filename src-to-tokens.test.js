@@ -96,21 +96,33 @@ test('on individual chars', function(t){
   });
 });
 
+var essenseOfTokens = function(tokens){
+  return tokens.map(function(token){
+    return [token[0], token[1]];
+  }).filter(function(token){
+    return token[0] !== 'whitespace';
+  });
+};
+
 test('dispatch', function(t){
   setup([
-    '#one#two(#3\'@^',
+    '#one #two #thr## ## #(#3\'@^',
   ], function(err, tokens){
-    t.deepEquals(tokens, [
-      ['dispatch', '#', 1, 1],
-      ['symbol', 'one', 1, 2],
-      ['dispatch', '#', 1, 5],
-      ['symbol', 'two', 1, 6],
-      ['open', '(', 1, 9],
-      ['dispatch', '#', 1, 10],
-      ['number', '3', 1, 11],
-      ['dispatch-quote', "'", 1, 12],
-      ['dispatch-deref', '@', 1, 13],
-      ['dispatch-meta', '^', 1, 14]
+    t.deepEquals(essenseOfTokens(tokens), [
+      ['dispatch-symbol', '#one'],
+      ['dispatch-symbol', '#two'],
+      ['dispatch-symbol', '#thr'],
+      ['dispatch', '#'],
+      ['dispatch', '#'],
+      ['dispatch', '#'],
+      ['dispatch', '#'],
+      ['dispatch', '#'],
+      ['open', '('],
+      ['dispatch', '#'],
+      ['number', '3'],
+      ['dispatch-quote', '\''],
+      ['dispatch-deref', '@'],
+      ['dispatch-meta', '^']
     ]);
     t.end(err);
   });
@@ -154,7 +166,7 @@ test('prevent harmful whitespace', function(t){ var assertWhitespace = function(
 
   assertNotWhitespace(",");
   assertNotWhitespace("\t");//yes tabs are harmful, especially when formatting lisp code
-  assertNotWhitespace("\r");//yep you need to fix your text editor
+  assertNotWhitespace("\r");//yep you need to adjust your text editor
   assertNotWhitespace("\v");
   assertNotWhitespace("\f");
   assertNotWhitespace("\b");

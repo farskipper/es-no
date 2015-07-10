@@ -188,41 +188,6 @@ test('map', function(t){
   });
 });
 
-test('dispatch symbol', function(t){
-  setup('#one two three', function(err, parts){
-    t.deepEquals(parts.map(rmLoc), [
-      {
-        type: "list",
-        src: "#",
-        list_max_size: 3,
-        value: [
-          {
-            type: "symbol",
-            src: "#",
-            value: "$$es-no$$dispatch"
-          },
-          {
-            type: "symbol",
-            src: "one",
-            value: "one"
-          },
-          {
-            type: "symbol",
-            src: "two",
-            value: "two"
-          }
-        ]
-      },
-      {
-        type: "symbol",
-        src: "three",
-        value: "three"
-      }
-    ]);
-    t.end(err);
-  });
-});
-
 var essenceOfAST = function(ast){
   if(ast.type === "list"){
     return ast.value.map(essenceOfAST);
@@ -243,7 +208,7 @@ test('dispatch grouping types', function(t){
   ].join("\n"), function(err, parts){
     t.deepEquals(parts.map(essenceOfAST), [
       ["$dispatch", "one", "two"], "three", "four",
-      ["$dispatch", "one", "two"], "three", "four",
+      ["$dispatch", "one"], "two", "three", "four",
       ["$dispatch", "one", ["$dispatch", "two", ["$dispatch", "three", "four"]]],
       ["$dispatch", "1"],
       ["$dispatch", ["$map", "one", "1"]], "two",
