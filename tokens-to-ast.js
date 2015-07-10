@@ -42,7 +42,7 @@ module.exports = function(){
     }else if(token.type === 'string'){
       token.value = token.src.substring(1, token.src.length - 1).replace(/\\"/g, '"');
     }else if(token.type === 'number'){
-      //just de-sugar the number. Converting it to a float, or big-num language dialect
+      //just de-sugar the number. Converting it to a float, or big-num is up to the language dialect
       token.value = token.src.replace(/[+,]/g, '').toLowerCase();
     }else if(token.type === 'close'){
       token = stack.pop();
