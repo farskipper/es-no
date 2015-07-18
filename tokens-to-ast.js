@@ -46,10 +46,22 @@ module.exports = function(){
       }
       return;
     }else if(token.type === 'open'){
-      return stack.push(xtend({}, token, {
+      stack.push(xtend({}, token, {
         type: 'list',
         value: []
       }));
+      if(token.src === '{'){
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$map'
+        }));
+      }else if(token.src === '['){
+        onToken(xtend({}, token, {
+          type: 'symbol',
+          value: '$$es-no$$array'
+        }));
+      }
+      return;
     }else if(token.type === 'string'){
       token.value = token.src.substring(1, token.src.length - 1).replace(/\\"/g, '"');
     }else if(token.type === 'number'){
@@ -92,17 +104,6 @@ module.exports = function(){
 
       onToken(token);
 
-      if(token.src === '{'){
-        onToken(xtend({}, token, {
-          type: 'symbol',
-          value: '$$es-no$$map'
-        }));
-      }else if(token.src === '['){
-        onToken(xtend({}, token, {
-          type: 'symbol',
-          value: '$$es-no$$array'
-        }));
-      }
       done();
     }catch(e){
       done(e);
