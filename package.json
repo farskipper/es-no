@@ -1,14 +1,14 @@
 {
   "name": "es-no",
   "version": "0.0.0",
-  "description": "A compile to JS language with only Essential Syntax and NO standard library.",
+  "description": "An experimental compiler that parses Essential Syntax and performs macro expansion until it outputs the target language. Also there is NO standard library.",
   "main": "index.js",
   "scripts": {
     "test": "node tests.js | tap-min"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smallhelm/es-no.git"
+    "url": "git+https://github.com/mrwrite/es-no.git"
   },
   "keywords": [
     "language",
@@ -22,12 +22,12 @@
     "tokens-to-ast.js",
     "ast-to-target.js"
   ],
-  "author": "smallhelm",
+  "author": "mrwrite",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/smallhelm/es-no/issues"
+    "url": "https://github.com/mrwrite/es-no/issues"
   },
-  "homepage": "https://github.com/smallhelm/es-no#readme",
+  "homepage": "https://github.com/mrwrite/es-no#readme",
   "devDependencies": {
     "tape": "4.0.0",
     "tap-min": "1.0.0"
